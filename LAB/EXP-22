@@ -1,0 +1,27 @@
+import cv2
+import numpy as np
+import os
+import subprocess
+
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+img=cv2.imread(image_path)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+kernel=np.array([
+    [0,-1,0],
+    [-1,5,-1],
+    [0,-1,0]
+],dtype=np.float32)
+
+result=cv2.filter2D(img,-1,kernel)
+
+output_path=os.path.expanduser("~/Desktop/laplacian_positive.jpg")
+cv2.imwrite(output_path,result)
+
+print("Positive center sharpening completed")
+print("Output:",output_path)
+
+subprocess.run(["open",output_path])
