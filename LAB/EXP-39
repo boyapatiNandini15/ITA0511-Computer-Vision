@@ -1,0 +1,71 @@
+import cv2
+import os
+from ultralytics import YOLO
+
+video_path=os.path.expanduser("~/Desktop/video.mp4")
+
+model=YOLO("yolo11n.pt")
+
+cap=cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    print("Video not found!")
+    exit()
+
+print("Vehicle detection started")
+print("Press Q to stop")
+
+vehicles={
+    2:"Car",
+    3:"Motorcycle",
+    5:"Bus",
+    7:"Truck"
+}
+
+while True:
+
+    ret,frame=cap.read()
+
+    if not ret:
+        break
+
+    results=model(frame,verbose=False)
+
+    for box in results[0].boxes:
+
+        cls=int(box.cls[0])
+
+        if cls in vehicles:
+
+            x1,y1,x2,y2=map(
+                int,
+                box.xyxy[0]
+            )
+
+            cv2.rectangle(
+                frame,
+                (x1,y1),
+                (x2,y2),
+                (0,255,0),
+                2
+            )
+
+            cv2.putText(
+                frame,
+                vehicles[cls],
+                (x1,y1-10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0,255,0),
+                2
+            )
+
+    cv2.imshow("Vehicle Detection",frame)
+
+    if cv2.waitKey(1)&0xff==ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+print("Vehicle detection completed")
