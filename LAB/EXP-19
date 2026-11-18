@@ -1,0 +1,28 @@
+import cv2
+import numpy as np
+import os
+import subprocess
+
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+img=cv2.imread(image_path)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+x=cv2.Sobel(gray,cv2.CV_32F,1,0,ksize=3)
+y=cv2.Sobel(gray,cv2.CV_32F,0,1,ksize=3)
+
+result=cv2.magnitude(x,y)
+result=cv2.normalize(result,None,0,255,cv2.NORM_MINMAX)
+result=result.astype(np.uint8)
+
+output_path=os.path.expanduser("~/Desktop/sobel_xy.jpg")
+cv2.imwrite(output_path,result)
+
+print("Sobel XY completed")
+print("Output:",output_path)
+
+subprocess.run(["open",output_path])
