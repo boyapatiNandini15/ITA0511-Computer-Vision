@@ -1,0 +1,22 @@
+import cv2
+import os
+import subprocess
+
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+img=cv2.imread(image_path)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+blur=cv2.GaussianBlur(img,(9,9),10)
+
+result=cv2.addWeighted(img,1.5,blur,-0.5,0)
+
+output_path=os.path.expanduser("~/Desktop/unsharp.jpg")
+cv2.imwrite(output_path,result)
+
+print("Unsharp masking completed")
+print("Output:",output_path)
+
+subprocess.run(["open",output_path])
