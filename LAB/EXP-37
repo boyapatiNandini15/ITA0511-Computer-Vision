@@ -1,0 +1,36 @@
+import cv2
+import os
+
+video_path=os.path.expanduser("~/Desktop/video.mp4")
+
+cap=cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    print("Video not found!")
+    exit()
+
+frames=[]
+
+while True:
+    ret,frame=cap.read()
+
+    if not ret:
+        break
+
+    frames.append(frame)
+
+cap.release()
+
+print("Playing video in reverse")
+print("Press Q to stop")
+
+for frame in reversed(frames):
+
+    cv2.imshow("Reverse Video",frame)
+
+    if cv2.waitKey(30)&0xff==ord("q"):
+        break
+
+cv2.destroyAllWindows()
+
+print("Reverse video completed")
