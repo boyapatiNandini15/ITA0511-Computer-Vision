@@ -1,0 +1,55 @@
+import cv2
+import os
+import subprocess
+
+reference_path=os.path.expanduser("~/Desktop/watch.jpg")
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+
+ref=cv2.imread(reference_path,0)
+img=cv2.imread(image_path,0)
+
+if ref is None:
+    print("watch.jpg not found!")
+    exit()
+
+if img is None:
+    print("input.jpg not found!")
+    exit()
+
+orb=cv2.ORB_create()
+
+kp1,des1=orb.detectAndCompute(ref,None)
+kp2,des2=orb.detectAndCompute(img,None)
+
+if des1 is None or des2 is None:
+    print("Watch not recognized")
+    exit()
+
+bf=cv2.BFMatcher(cv2.NORM_HAMMING,crossCheck=True)
+
+matches=bf.match(des1,des2)
+matches=sorted(matches,key=lambda x:x.distance)
+
+good=matches[:min(30,len(matches))]
+
+print("Matching features:",len(good))
+
+if len(good)>=10:
+    print("Watch recognized")
+else:
+    print("Watch not recognized")
+
+result=cv2.drawMatches(
+    ref,kp1,
+    img,kp2,
+    good,None,
+    flags=2
+)
+
+output_path=os.path.expanduser("~/Desktop/watch_result.jpg")
+
+cv2.imwrite(output_path,result)
+
+print("Output:",output_path)
+
+subprocess.run(["open",output_path])
