@@ -1,0 +1,25 @@
+import cv2
+import os
+import subprocess
+
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+img=cv2.imread(image_path)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+big=cv2.resize(img,None,fx=2,fy=2)
+small=cv2.resize(img,None,fx=0.5,fy=0.5)
+
+big_path=os.path.expanduser("~/Desktop/bigger.jpg")
+small_path=os.path.expanduser("~/Desktop/smaller.jpg")
+
+cv2.imwrite(big_path,big)
+cv2.imwrite(small_path,small)
+
+print("Scaling completed")
+print("Bigger:",big_path)
+print("Smaller:",small_path)
+
+subprocess.run(["open",big_path])
