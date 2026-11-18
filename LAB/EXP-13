@@ -1,0 +1,48 @@
+import cv2
+import numpy as np
+
+video_path=os.path.expanduser("~/Desktop/video.mp4")
+
+cap=cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    print("Video not found!")
+    exit()
+
+print("Perspective video started")
+print("Press Q to stop")
+
+while True:
+    ret,frame=cap.read()
+
+    if not ret:
+        break
+
+    h,w=frame.shape[:2]
+
+    src=np.float32([
+        [0,0],
+        [w-1,0],
+        [w-1,h-1],
+        [0,h-1]
+    ])
+
+    dst=np.float32([
+        [50,30],
+        [w-50,30],
+        [w-20,h-20],
+        [20,h-20]
+    ])
+
+    M=cv2.getPerspectiveTransform(src,dst)
+    result=cv2.warpPerspective(frame,M,(w,h))
+
+    cv2.imshow("Perspective Video",result)
+
+    if cv2.waitKey(20)&0xff==ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+print("Completed")
