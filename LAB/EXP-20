@@ -1,0 +1,28 @@
+import cv2
+import numpy as np
+import os
+import subprocess
+
+image_path=os.path.expanduser("~/Desktop/input.jpg")
+img=cv2.imread(image_path)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+kernel=np.array([
+    [0,1,0],
+    [1,-4,1],
+    [0,1,0]
+],dtype=np.float32)
+
+lap=cv2.filter2D(img,-1,kernel)
+result=cv2.subtract(img,lap)
+
+output_path=os.path.expanduser("~/Desktop/laplacian_negative.jpg")
+cv2.imwrite(output_path,result)
+
+print("Laplacian sharpening completed")
+print("Output:",output_path)
+
+subprocess.run(["open",output_path])
